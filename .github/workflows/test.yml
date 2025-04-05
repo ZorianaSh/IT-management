@@ -25,6 +25,7 @@ jobs:
         run: pytest --maxfail=1 --disable-warnings
 
   build:
+    needs: test
     runs-on: windows-latest
 
     steps:
