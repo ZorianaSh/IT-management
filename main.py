@@ -4,7 +4,7 @@ from collections import Counter
 import re
 
 class TextAnalyzerModel:
-    def __init__(self, text):
+    def __init__(self, text=""):
         self.text = text
 
     def analyze(self):
@@ -44,10 +44,11 @@ class TextAnalyzerView:
 
     def show_error(self, message):
         messagebox.showerror("Помилка", message)
-
+ з виглядом
 class TextAnalyzerController:
     def __init__(self, root):
         self.view = TextAnalyzerView(root)
+        self.model = TextAnalyzerModel()  
 
     def analyze_text(self):
         input_text = self.view.get_input_text()
@@ -55,8 +56,9 @@ class TextAnalyzerController:
             self.view.show_error("Будь ласка, введіть текст для аналізу.")
             return
 
-        model = TextAnalyzerModel(input_text)
-        result = model.analyze()
+        self.model.text = input_text
+
+        result = self.model.analyze()
 
         self.view.display_results(result)
 
