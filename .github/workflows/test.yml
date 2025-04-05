@@ -25,19 +25,31 @@ jobs:
         run: pytest --maxfail=1 --disable-warnings
 
   build:
-    needs: test 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4  
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.12'
 
-      - name: Build project
+      - name: Install dependencies
         run: |
-          echo "✅ Успішно пройдено тести. Виконуємо білд..."
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt || echo "No requirements.txt found"
+
+      - name: Build EXE
+        run: pyinstaller --onefile main.py
+
+      - name: Upload EXE Artifact
+        uses: actions/upload-artifact@v4 
+        with:
+          name: built-exe
+          path: dist/main.exe
+     
+
 
