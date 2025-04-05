@@ -44,7 +44,7 @@ class TextAnalyzerView:
 
     def show_error(self, message):
         messagebox.showerror("Помилка", message)
- з виглядом
+
 class TextAnalyzerController:
     def __init__(self, root):
         self.view = TextAnalyzerView(root)
