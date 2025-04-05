@@ -50,7 +50,7 @@ class Library:
                 status = "Позичена" if book.is_borrowed else "Доступна"
                 print(f"{book} - {status}")
 
-
+#Початок роботи 
 library = Library("Центральна бібліотека")
 
 # Створення книг
