@@ -12,8 +12,9 @@ class TextAnalyzerModel:
         return Counter(words)
 
 class TextAnalyzerView:
-    def __init__(self, root):
+    def __init__(self, root, controller):
         self.root = root
+        self.controller = controller 
         self.root.title("Частотний аналіз тексту")
 
         self.text_label = tk.Label(root, text="Введіть текст:")
@@ -22,7 +23,7 @@ class TextAnalyzerView:
         self.text_input = tk.Text(root, height=10, width=50)
         self.text_input.pack()
 
-        self.analyze_button = tk.Button(root, text="Аналізувати", command=self.analyze_text)
+        self.analyze_button = tk.Button(root, text="Аналізувати", command=self.controller.analyze_text)  # викликаємо метод контролера
         self.analyze_button.pack()
 
         self.result_label = tk.Label(root, text="Результати:")
@@ -37,7 +38,7 @@ class TextAnalyzerView:
 
     def display_results(self, results):
         self.result_output.config(state=tk.NORMAL)
-        self.result_output.delete("1.0", tk.END) 
+        self.result_output.delete("1.0", tk.END)  
         for word, count in results.items():
             self.result_output.insert(tk.END, f"{word}: {count}\n")
         self.result_output.config(state=tk.DISABLED)
@@ -47,7 +48,7 @@ class TextAnalyzerView:
 
 class TextAnalyzerController:
     def __init__(self, root):
-        self.view = TextAnalyzerView(root)
+        self.view = TextAnalyzerView(root, self) 
         self.model = TextAnalyzerModel()  
 
     def analyze_text(self):
@@ -55,6 +56,7 @@ class TextAnalyzerController:
         if not input_text:
             self.view.show_error("Будь ласка, введіть текст для аналізу.")
             return
+
 
         self.model.text = input_text
 
