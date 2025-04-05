@@ -1,44 +1,69 @@
-class Book:
-    def __init__(self, title, author, genre):
-        self.title = title
-        self.author = author
-        self.genre = genre
-        # Прибрано ініціалізацію is_borrowed
-        # self.is_borrowed = False  ← Помилка: відсутня ініціалізація статусу позиченості.
+import tkinter as tk
+from tkinter import messagebox
+from collections import Counter
+import re
 
-class User:
-    def __init__(self, name, id):
-        self.name = name
-        self.id = id
-        self.borrowed_books = []
+class TextAnalyzerModel:
+    def __init__(self, text):
+        self.text = text
 
-    def borrow_book(self, book):
-        # Помилка: книга не позичається
-        if not book.is_borrowed:
-            # book.is_borrowed = True  ← закоментовано, книга не позичається
-            self.borrowed_books.append(book)
-        else:
-            print(f"Книга '{book.title}' вже позичена!")
+    def analyze(self):
+        words = re.findall(r'\b\w+\b', self.text.lower())
+        return Counter(words)
 
-    def return_book(self, book):
-        # Помилка: книга не повертається
-        if book in self.borrowed_books:
-            # book.is_borrowed = False  ← закоментовано, книга не повертається
-            self.borrowed_books.remove(book)
-        else:
-            print(f"{self.name} не позичав(ла) книгу '{book.title}'.")
+class TextAnalyzerView:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Частотний аналіз тексту")
 
-class Library:
-    def __init__(self, name):
-        self.name = name
-        self.books = []
+        self.text_label = tk.Label(root, text="Введіть текст:")
+        self.text_label.pack()
 
-    def add_book(self, book):
-        # Помилка: книга не додається
-        # self.books.append(book)  ← закоментовано, книга не додається
-        print(f"Книга '{book.title}' не була додана до бібліотеки.")
+        self.text_input = tk.Text(root, height=10, width=50)
+        self.text_input.pack()
 
-    def list_books(self):
-        for book in self.books:
-            status = "Доступна" if not book.is_borrowed else "Позичена"
-            print(f"{book.title} by {book.author} ({book.genre}) - {status}")
+        self.analyze_button = tk.Button(root, text="Аналізувати", command=self.analyze_text)
+        self.analyze_button.pack()
+
+        self.result_label = tk.Label(root, text="Результати:")
+        self.result_label.pack()
+
+        self.result_output = tk.Text(root, height=10, width=50)
+        self.result_output.pack()
+        self.result_output.config(state=tk.DISABLED)
+
+    def get_input_text(self):
+        return self.text_input.get("1.0", tk.END).strip()
+
+    def display_results(self, results):
+        self.result_output.config(state=tk.NORMAL)
+        self.result_output.delete("1.0", tk.END) 
+        for word, count in results.items():
+            self.result_output.insert(tk.END, f"{word}: {count}\n")
+        self.result_output.config(state=tk.DISABLED)
+
+    def show_error(self, message):
+        messagebox.showerror("Помилка", message)
+
+class TextAnalyzerController:
+    def __init__(self, root):
+        self.view = TextAnalyzerView(root)
+
+    def analyze_text(self):
+        input_text = self.view.get_input_text()
+        if not input_text:
+            self.view.show_error("Будь ласка, введіть текст для аналізу.")
+            return
+
+        model = TextAnalyzerModel(input_text)
+        result = model.analyze()
+
+        self.view.display_results(result)
+
+def main():
+    root = tk.Tk()
+    controller = TextAnalyzerController(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
